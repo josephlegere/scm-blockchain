@@ -1,22 +1,12 @@
-import { SERVER_ATTR, RENDER_SOURCE, today, days, months } from '../../configurations.js';
-import { PrintDoc } from '../printDoc/printDoc.js';
-import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../library/library.js';
-import { localDatabase } from '../localDatabase/localDatabase.js';
+import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 
-let localDB = new localDatabase();
-
-let Login = class {
+let Auth = class {
 
     constructor() {
-        history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
 
         //external elements
 
         //internal elements
-        this.log_items = {
-            userentry: '',
-            password: ''
-        };
 
         this.set_default();
 
@@ -25,36 +15,6 @@ let Login = class {
     }
 
     triggers() {
-        let trigger_1 = document.body.addEventListener('click', (e) => {
-            let loginSubmit = e.target.closest('#login-submit');
-
-            if (loginSubmit) {
-                try {
-                    if (document.getElementById('userentry').value == '') throw 'Input something in the Email';
-                    if (document.getElementById('password').value == '') throw 'Input something in the Password';
-                    this.submitLogged();
-                }
-                catch (err) {
-                    console.log(err);
-                }
-            }
-        });
-
-        let trigger_2 = document.body.addEventListener('input', (e) => {
-            let logInfo = e.target.closest('.log-info');
-
-            if (logInfo) {
-                let _id = logInfo.getAttribute('id');
-                let _value = logInfo.value;
-
-                try {
-                    this.log_items[_id] = _value;
-                }
-                catch (err) {
-                    console.log(err);
-                }
-            }
-        });
     }
 
     set_default() {
@@ -64,23 +24,6 @@ let Login = class {
         let _html = '';
 
         _html = `
-            <div class="row" id="login-container">
-                <form class="col s12">
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="userentry" type="email" class="log-info">
-                            <label for="userentry">Username / Email</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="password" type="password" class="log-info">
-                            <label for="password">Password</label>
-                        </div>
-                    </div>
-                    <a class="waves-effect waves-light btn-large" id="login-submit">Sign In</a>
-                </form>
-            </div>
         `;
 
         add_html({
@@ -125,11 +68,9 @@ let Login = class {
                 })
                 .catch(err => {
                     console.log(err);
-                    this.render();
                 });
         }
         else {
-            this.render();
         }
     }
 
@@ -152,4 +93,4 @@ let Login = class {
 
 }
 
-export { Login };
+export { Auth };

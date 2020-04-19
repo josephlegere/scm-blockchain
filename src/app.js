@@ -1,13 +1,18 @@
 import { SERVER_ATTR, RENDER_SOURCE } from './configurations';
 import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from './essentials/library/library';
 import { localDatabase } from './essentials/localDatabase/localDatabase';
-import { Login } from './essentials/authentication/authentication';
+import { Auth } from './essentials/authentication/authentication';
 import { Router } from './essentials/router/router';
 import { Instantiate } from './essentials/appinstantiate/appinstantiate';
 import './scss/app.scss';
 
+import Login from './components/login/login'
+
 //Sub Pages
 let app_functions = {
+    "Login": {
+        "construct": Login
+    }
     /*"Invoicing": {
         "Recent Invoices": {
             "construct": RecentInvoicesPage
@@ -84,7 +89,7 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
         });
 
         this.render_navigation();
-
+        console.log(app_functions)
         app_instance.instantiate(app_functions);
 
     }
