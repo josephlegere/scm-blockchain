@@ -6,7 +6,7 @@ import { Router } from './essentials/router/router';
 import { Instantiate } from './essentials/appinstantiate/appinstantiate';
 import './scss/app.scss';
 
-import Login from './components/login/login'
+import { Login } from './components/login/login'
 
 //Sub Pages
 let app_functions = {
@@ -89,7 +89,7 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
         });
 
         this.render_navigation();
-        console.log(app_functions)
+        
         app_instance.instantiate(app_functions);
 
     }
