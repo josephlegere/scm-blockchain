@@ -73,53 +73,8 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
         let _html = '';
 
         _html = `
-            <div class="page-container" id="${this.page_container_title}">
-                <div class="row">
-                    <div class="col s12">
-                        <h6>
-                            <div>Form Number</div><br>
-                            <span id="form-number" class="form-number">#####</span>
-                        </h6>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <form class="col s12 center">
-
-                        <div class="row">
-                            <div class="input-field col s6">
-                            <input placeholder="" id="first_name" type="text" class="validate">
-                            <label for="first_name">First Name</label>
-                            </div>
-                            <div class="input-field col s6">
-                            <input id="last_name" type="text" class="validate">
-                            <label for="last_name">Last Name</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                            <input disabled value="I am not editable" id="disabled" type="text" class="validate">
-                            <label for="disabled">Disabled</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                            <input id="password" type="password" class="validate">
-                            <label for="password">Password</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                            <input id="email" type="email" class="validate">
-                            <label for="email">Email</label>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-                
-                <footer class="page-footer">
-                </footer>
+            <a href="#" data-target="main-side-navi" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <div id="content-display" style="padding-left:300px">
             </div>
         `;
 
@@ -128,8 +83,56 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
             value: _html
         });
 
-        //app_instance.instantiate(app_functions);
+        this.render_navigation();
 
+        app_instance.instantiate(app_functions);
+
+    }
+
+    render_navigation() {
+
+        let _menu_items = '';
+
+        Object.entries(app_functions).forEach((elem, key) => {
+            let _key = elem[0];
+            let _value = elem[1];
+            let _temp = '';
+            let _temp_sub_items = '';
+
+            Object.entries(_value).forEach((elem_2, key_2) => {
+                let _key_2 = elem_2[0];
+                let _value_2 = elem_2[1];
+
+                let _path = (() => {
+                    let i = '';
+                    let _arr = _key_2.split(' ');
+                    _arr.forEach((elem_3, key_3) => {
+                        i += elem_3.toLowerCase() + (key_3 + 1 < _arr.length ? '-' : '');
+                    });
+                    return i;
+                })();
+
+                _temp_sub_items += `
+                    <li class="router-link menu-items${(key == 0 && key_2 == 0 ? ' active' : '')}" encoded-path="${key + '.' + key_2}"><a href="/${_path}">${_key_2}</a></li>
+                `;
+            });
+
+            _temp = `
+                <li ${(key == 0 ? 'class="active"' : '')}>
+                    <div class="collapsible-header">${_key}</div>
+                    <div class="collapsible-body">
+                        <ul>
+                            ${_temp_sub_items}
+                        </ul>
+                    </div>
+                </li>`;
+            _menu_items += _temp;
+        });
+
+        add_html({
+            element: '#main-side-navi',
+            value: _menu_items
+        });
     }
 
     //methods
