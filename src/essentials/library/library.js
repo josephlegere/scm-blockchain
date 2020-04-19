@@ -24,6 +24,13 @@ let append_html = (params) => {
     }
 }
 
+let prepend_html = (params) => {
+    let _elem = document.querySelector(params.element);
+    if (_elem !== null) { //check if element exist, if not then no need to append
+        _elem.insertAdjacentHTML('afterbegin', params.value);
+    }
+}
+
 let remove_element = (params) => {
     let _val = params.value;
     let _elem = document.querySelector(_val);
@@ -348,6 +355,7 @@ function getToday () { //get today instance
 export {
     add_html,
     append_html,
+    prepend_html,
     remove_element,
     renderPreLoader,
     numberWithCommas,

@@ -1,5 +1,5 @@
 import { SERVER_ATTR, RENDER_SOURCE } from './configurations';
-import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from './essentials/library/library';
+import { add_html, append_html, prepend_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from './essentials/library/library';
 import { localDatabase } from './essentials/localDatabase/localDatabase';
 import { Auth } from './essentials/authentication/authentication';
 import { Router } from './essentials/router/router';
@@ -32,9 +32,6 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
 
     constructor() {
 
-        this.page_container_title = 'dashboard';
-        this.page_container = `#${this.page_container_title}`;
-
         //external elements
 
         //internal elements
@@ -47,28 +44,6 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
     }
 
     triggers() {
-        let root_element = document.querySelector(this.page_container);
-
-        let trigger_click_function = async (e) => {
-            let routerLink = e.target.closest('.router-link');
-
-            if (routerLink) {
-                let _body_offsetWidth = document.body.offsetWidth;
-                //console.log(_body_offsetWidth);
-                if (_body_offsetWidth < 993) {
-                    this.trigger_elements['side navigation'].close();
-                }
-            }
-        }
-
-        let trigger_click = root_element.addEventListener('click', trigger_click_function);
-
-        this.trigger_elements = {
-            'trigger click': {
-                event: 'click',
-                action: trigger_click
-            }
-        }
     }
 
     set_default() {
@@ -95,48 +70,41 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
     }
 
     render_navigation() {
-
-        let _menu_items = '';
+        let _side_menu_items = '';
+        let _navi_menu_items = '';
 
         Object.entries(app_functions).forEach((elem, key) => {
             let _key = elem[0];
             let _value = elem[1];
-            let _temp = '';
-            let _temp_sub_items = '';
 
-            Object.entries(_value).forEach((elem_2, key_2) => {
-                let _key_2 = elem_2[0];
-                let _value_2 = elem_2[1];
+            let _path = (() => {
+                let i = '';
+                let _arr = _key.split(' ');
+                _arr.forEach((elem_2, key_2) => {
+                    i += elem_2.toLowerCase() + (key_2 + 1 < _arr.length ? '-' : '');
+                });
+                return i;
+            })();
 
-                let _path = (() => {
-                    let i = '';
-                    let _arr = _key_2.split(' ');
-                    _arr.forEach((elem_3, key_3) => {
-                        i += elem_3.toLowerCase() + (key_3 + 1 < _arr.length ? '-' : '');
-                    });
-                    return i;
-                })();
-
-                _temp_sub_items += `
-                    <li class="router-link menu-items${(key == 0 && key_2 == 0 ? ' active' : '')}" encoded-path="${key + '.' + key_2}"><a href="/${_path}">${_key_2}</a></li>
-                `;
-            });
-
-            _temp = `
-                <li ${(key == 0 ? 'class="active"' : '')}>
-                    <div class="collapsible-header">${_key}</div>
-                    <div class="collapsible-body">
-                        <ul>
-                            ${_temp_sub_items}
-                        </ul>
-                    </div>
+            _side_menu_items += `
+                <li class="router-link menu-items${(key == 0 ? ' active' : '')}" encoded-path="${key}">
+                    <a href="/${_path}" class="waves-effect">${_key}</a>
                 </li>`;
-            _menu_items += _temp;
+
+            _navi_menu_items += `
+                <li class="router-link menu-items${(key == 0 ? ' active' : '')}" encoded-path="${key}">
+                    <a href="/${_path}">${_key}</a>
+                </li>`;
         });
 
-        add_html({
-            element: '#main-side-navi',
-            value: _menu_items
+        append_html({
+            element: '#side-menu-items',
+            value: _side_menu_items
+        });
+
+        prepend_html({
+            element: '#navi-menu-items',
+            value: _navi_menu_items
         });
     }
 
