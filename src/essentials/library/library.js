@@ -12,12 +12,16 @@ let date_formats = {
 //DOM Manipulate
 let add_html = (params) => {
     let _elem = document.querySelector(params.element);
-    _elem.innerHTML = params.value;
+    if (_elem !== null) { //check if element exist, if not then no need to add
+        _elem.innerHTML = params.value;
+    }
 }
 
 let append_html = (params) => {
     let _elem = document.querySelector(params.element);
-    _elem.insertAdjacentHTML('beforeend', params.value);
+    if (_elem !== null) { //check if element exist, if not then no need to append
+        _elem.insertAdjacentHTML('beforeend', params.value);
+    }
 }
 
 let remove_element = (params) => {
