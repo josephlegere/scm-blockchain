@@ -1,12 +1,13 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import { localDatabase } from '../../essentials/localDatabase/localDatabase';
+//import './login.scss';
 
 let localDB = new localDatabase();
 
 let Login = class {
 
-    constructor() {
+    constructor(view) {
         //history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
 
         //external elements
@@ -16,9 +17,11 @@ let Login = class {
             userentry: '',
             password: ''
         };
+        this.view = view;
 
         this.set_default();
 
+        this.render();
         //this.triggers();
         //this.checkLogged();
     }
@@ -62,25 +65,31 @@ let Login = class {
     render() {
         let _html = '';
 
-        _html = `
-            <div class="row" id="login-container">
-                <form class="col s12">
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="userentry" type="email" class="log-info">
-                            <label for="userentry">Username / Email</label>
+        if (this.view == 'page') {
+            _html = `
+                <br><br>
+                <div class="row" id="login-container">
+                    <form class="col s12">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="userentry" type="email" class="log-info">
+                                <label for="userentry">Username / Email</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                            <input id="password" type="password" class="log-info">
-                            <label for="password">Password</label>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="password" type="password" class="log-info">
+                                <label for="password">Password</label>
+                            </div>
                         </div>
-                    </div>
-                    <a class="waves-effect waves-light btn-large" id="login-submit">Sign In</a>
-                </form>
-            </div>
-        `;
+                        <a class="waves-effect waves-light btn-large" id="login-submit">Sign In</a>
+                    </form>
+                </div>
+            `;
+        }
+        else if (this.view == 'box') {
+            _html = ``;
+        }
 
         add_html({
             element: RENDER_SOURCE,
