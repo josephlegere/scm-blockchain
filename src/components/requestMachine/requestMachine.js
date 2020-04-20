@@ -2,7 +2,7 @@ import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import './requestMachine.scss'
 
-let RequestMachine = class { //wrapper for the app itself, that would supposedly also jumpstart the app
+let RequestMachine = class {
 
     constructor() {
 
@@ -96,6 +96,12 @@ let RequestMachine = class { //wrapper for the app itself, that would supposedly
                                 <label for="notes">Notes</label>
                             </div>
                             <div class="col s12 m2"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col s12 offset-m2 m8">
+                                <a class="waves-effect waves-light btn right" id="submit-order">Submit Order</a>
+                            </div>
                         </div>
 
                     </form>
