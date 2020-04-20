@@ -1,7 +1,7 @@
 import { SERVER_ATTR, RENDER_SOURCE } from './configurations';
 import { add_html, append_html, prepend_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from './essentials/library/library';
 import { localDatabase } from './essentials/localDatabase/localDatabase';
-import { Auth } from './essentials/authentication/authentication';
+//import { Auth } from './essentials/authentication/authentication';
 import { Router } from './essentials/router/router';
 import { Instantiate } from './essentials/appinstantiate/appinstantiate';
 import './scss/app.scss';

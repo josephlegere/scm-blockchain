@@ -10,8 +10,8 @@ let Auth = class { //Auth is only for authenticating this client to the remote s
 
         this.set_default();
 
-        this.triggers();
-        this.checkLogged();
+        //this.triggers();
+        //this.checkLogged();
     }
 
     triggers() {
@@ -20,66 +20,53 @@ let Auth = class { //Auth is only for authenticating this client to the remote s
     set_default() {
     }
 
-    render() {
-        let _html = '';
-
-        _html = `
-        `;
-
-        add_html({
-            element: RENDER_SOURCE,
-            value: _html
-        });
-    }
-
     //methods
 
     //triggers
     //passing tokens with the server url provided in the configurations
-    //get_token () {} //get token in server
-    //compare_token {} //compare token in server
+    //convert credentials to token
+    //get_token () {} //get token in server <- verifyLogged
+    //compare_token {} //compare token in server <- verifyLogged
     //combine checkLogged and verifyLogged
-    submitLogged() {
-        let _body = {
-            dskEntry: 1,
-            ue: this.log_items.userentry,
-            pw: this.log_items.password
-        };
 
-        this.verifylogged(_body)
-            .then(res => {
-                if (Object.keys(res.records).length == 0) throw 'Incorrect credentials entered';
-                localDB.set({ log_token: res.records.uniq });
-                let dashboard = new dashboardPage();
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    }
-
-    checkLogged() {
-        let userLogged = localDB.get({ log_token: 1 });
-
-        if (!(Object.keys(userLogged).length === 0)) {
+    gainAccess(userEntry, password) {
+        return new Promise((resolve, reject) => {
             let _body = {
-                dskEntry: 1,
-                tkn: userLogged.log_token
+                deviceEntry: 'web', //device entry e.g. web, mobile, desktop
+                ue: userentry,
+                pw: password
             };
 
-            this.verifylogged(_body)
+            this.getLog(_body)
                 .then(res => {
-                    let dashboard = new dashboardPage();
+                    //res.token
+                    resolve(res.token); //token verified and returned
                 })
                 .catch(err => {
-                    console.log(err);
+                    reject('Unable to gain access!');
                 });
-        }
-        else {
-        }
+        });
+    }
+
+    verifyAccess(token) {
+        return new Promise ((resolve, reject) => {
+            let _body = {
+                deviceEntry: 'web', //device entry e.g. web, mobile, desktop
+                tkn: token
+            }
+
+            this.getLog(_body)
+                .then(res => {
+                    resolve(true); //token verified and is available
+                })
+                .catch(err => {
+                    reject('Unable to verify access!');
+                });
+        });
     }
 
     //controllers
-    async verifylogged(value) {
+    async getLog(value) {
         const body = JSON.stringify(value);
         const sendRequest = new Request(SERVER_ATTR.PAGE_LOGIN, {
             method: 'GET',

@@ -1,14 +1,16 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import { localDatabase } from '../../essentials/localDatabase/localDatabase';
+import { Auth } from '../../essentials/authentication/authentication';
 //import './login.scss';
 
 let localDB = new localDatabase();
+let authService = new Auth();
 
 let Login = class { //get token from localDatabase, and display forms and pages
 
     constructor(view) {
-        //history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
+        history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
 
         //external elements
 
@@ -100,17 +102,11 @@ let Login = class { //get token from localDatabase, and display forms and pages
     //methods
 
     //triggers
-    submitLogged() {
-        let _body = {
-            dskEntry: 1,
-            ue: this.log_items.userentry,
-            pw: this.log_items.password
-        };
-
-        this.verifylogged(_body) //auth service
+    async submitLogged () {
+        await authService.gainAccess(this.log_items.userentry, this.log_items.password) //auth service
             .then(res => {
-                if (Object.keys(res.records).length == 0) throw 'Incorrect credentials entered';
-                localDB.set({ log_token: res.records.uniq });
+                //if (Object.keys(res.records).length == 0) throw 'Incorrect credentials entered';
+                //localDB.set({ log_token: res.records.uniq });
                 let dashboard = new dashboardPage();
             })
             .catch(err => {
@@ -118,17 +114,13 @@ let Login = class { //get token from localDatabase, and display forms and pages
             });
     }
 
-    checkLogged() {
+    async checkLogged () {
         let userLogged = localDB.get({ log_token: 1 });
 
         if (!(Object.keys(userLogged).length === 0)) {
-            let _body = {
-                dskEntry: 1,
-                tkn: userLogged.log_token
-            };
 
-            this.verifylogged(_body)
-                .then(res => {
+            await authService.verifyAccess(userLogged.log_token)
+                .then(res => { //token verified
                     let dashboard = new dashboardPage();
                 })
                 .catch(err => {
@@ -136,6 +128,7 @@ let Login = class { //get token from localDatabase, and display forms and pages
                 });
         }
         else {
+            console.log('Enter credentials first!');
         }
     }
 
