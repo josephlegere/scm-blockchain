@@ -1,8 +1,9 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
+import './login.scss';
+
 import { localDatabase } from '../../essentials/localDatabase/localDatabase';
 import { Auth } from '../../essentials/authentication/authentication';
-//import './login.scss';
 
 let localDB = new localDatabase();
 let authService = new Auth();

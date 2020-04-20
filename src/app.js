@@ -12,6 +12,9 @@ import { Login } from './components/login/login'
 let app_functions = {
     "Login": {
         "construct": Login
+    },
+    "Request Machine": {
+        //"construct": RequestMachine
     }
     /*"Invoicing": {
         "Recent Invoices": {
