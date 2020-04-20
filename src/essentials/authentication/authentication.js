@@ -1,6 +1,6 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 
-let Auth = class {
+let Auth = class { //Auth is only for authenticating this client to the remote server
 
     constructor() {
 
@@ -35,6 +35,10 @@ let Auth = class {
     //methods
 
     //triggers
+    //passing tokens with the server url provided in the configurations
+    //get_token () {} //get token in server
+    //compare_token {} //compare token in server
+    //combine checkLogged and verifyLogged
     submitLogged() {
         let _body = {
             dskEntry: 1,
@@ -78,7 +82,7 @@ let Auth = class {
     async verifylogged(value) {
         const body = JSON.stringify(value);
         const sendRequest = new Request(SERVER_ATTR.PAGE_LOGIN, {
-            method: 'POST',
+            method: 'GET',
             body: body,
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'

@@ -5,7 +5,7 @@ import { localDatabase } from '../../essentials/localDatabase/localDatabase';
 
 let localDB = new localDatabase();
 
-let Login = class {
+let Login = class { //get token from localDatabase, and display forms and pages
 
     constructor(view) {
         //history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
@@ -107,7 +107,7 @@ let Login = class {
             pw: this.log_items.password
         };
 
-        this.verifylogged(_body)
+        this.verifylogged(_body) //auth service
             .then(res => {
                 if (Object.keys(res.records).length == 0) throw 'Incorrect credentials entered';
                 localDB.set({ log_token: res.records.uniq });
@@ -137,23 +137,6 @@ let Login = class {
         }
         else {
         }
-    }
-
-    //controllers
-    async verifylogged(value) {
-        const body = JSON.stringify(value);
-        const sendRequest = new Request(SERVER_ATTR.PAGE_LOGIN, {
-            method: 'POST',
-            body: body,
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
-            }
-        });
-
-        let list = await fetch(sendRequest); //fetch returns a Promise
-        let data = await list.json();
-
-        return data;
     }
 
 }
