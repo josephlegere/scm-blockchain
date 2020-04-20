@@ -2,11 +2,11 @@ import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import './requestMachine.scss'
 
-let RequestMachinePage = class { //wrapper for the app itself, that would supposedly also jumpstart the app
+let RequestMachine = class { //wrapper for the app itself, that would supposedly also jumpstart the app
 
     constructor() {
 
-        this.page_container_title = 'dashboard';
+        this.page_container_title = 'request-machine';
         this.page_container = `#${this.page_container_title}`;
 
         //external elements
@@ -24,24 +24,19 @@ let RequestMachinePage = class { //wrapper for the app itself, that would suppos
         let root_element = document.querySelector(this.page_container);
 
         let trigger_click_function = async (e) => {
-            let routerLink = e.target.closest('.router-link');
-
-            if (routerLink) {
-                let _body_offsetWidth = document.body.offsetWidth;
-                //console.log(_body_offsetWidth);
-                if (_body_offsetWidth < 993) {
-                    this.trigger_elements['side navigation'].close();
-                }
-            }
         }
 
         let trigger_click = root_element.addEventListener('click', trigger_click_function);
+
+        let machine_select = document.querySelector('#item-types');
+        let machine_instance_select = M.FormSelect.init(machine_select, {});
 
         this.trigger_elements = {
             'trigger click': {
                 event: 'click',
                 action: trigger_click
-            }
+            },
+            'machine': machine_instance_select
         }
     }
 
@@ -53,6 +48,12 @@ let RequestMachinePage = class { //wrapper for the app itself, that would suppos
 
         _html = `
             <div class="page-container" id="${this.page_container_title}">
+                <div class="row">
+                    <div class="col s12 right-align">
+                        <b><span id="voucher-date">(date)</span></b>
+                    </div>
+                </div>
+                
                 <div class="row">
                     <div class="col s12">
                         <h6>
@@ -66,39 +67,39 @@ let RequestMachinePage = class { //wrapper for the app itself, that would suppos
                     <form class="col s12 center">
 
                         <div class="row">
-                            <div class="input-field col s6">
-                            <input placeholder="" id="first_name" type="text" class="validate">
-                            <label for="first_name">First Name</label>
+                            <div class="col s12 m2"></div>
+
+                            <div class="input-field col s12 m8">
+                                <select id="item-types" class="form-select-item" data-property="machine">
+                                    <option value="Compressor">Compressor</option>
+                                    <option value="Condenser">Condenser</option>
+                                </select>
+                                <label for="machine">Machine</label>
                             </div>
-                            <div class="input-field col s6">
-                            <input id="last_name" type="text" class="validate">
-                            <label for="last_name">Last Name</label>
-                            </div>
+                            <div class="col s12 m2"></div>
                         </div>
+
                         <div class="row">
-                            <div class="input-field col s12">
-                            <input disabled value="I am not editable" id="disabled" type="text" class="validate">
-                            <label for="disabled">Disabled</label>
+                            <div class="col s12 m2"></div>
+
+                            <div class="input-field col s12 m8">
+                                <input placeholder="" id="quantity" type="number" class="" min="0" max="15" value="0">
+                                <label for="quantity">Quantity</label>
                             </div>
+                            <div class="col s12 m2"></div>
                         </div>
+
                         <div class="row">
-                            <div class="input-field col s12">
-                            <input id="password" type="password" class="validate">
-                            <label for="password">Password</label>
+                            <div class="col s12 m2"></div>
+                            <div class="input-field col s12 m8">
+                                <textarea id="notes" class="materialize-textarea"></textarea>
+                                <label for="notes">Notes</label>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                            <input id="email" type="email" class="validate">
-                            <label for="email">Email</label>
-                            </div>
+                            <div class="col s12 m2"></div>
                         </div>
 
                     </form>
                 </div>
-                
-                <footer class="page-footer">
-                </footer>
             </div>
         `;
 
@@ -106,8 +107,6 @@ let RequestMachinePage = class { //wrapper for the app itself, that would suppos
             element: RENDER_SOURCE,
             value: _html
         });
-
-        //app_instance.instantiate(app_functions);
 
     }
 
@@ -119,4 +118,4 @@ let RequestMachinePage = class { //wrapper for the app itself, that would suppos
 
 }
 
-export { RequestMachinePage };
+export { RequestMachine };

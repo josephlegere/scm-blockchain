@@ -1,20 +1,22 @@
 import { SERVER_ATTR, RENDER_SOURCE } from './configurations';
 import { add_html, append_html, prepend_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from './essentials/library/library';
-import { localDatabase } from './essentials/localDatabase/localDatabase';
-//import { Auth } from './essentials/authentication/authentication';
-import { Router } from './essentials/router/router';
 import { Instantiate } from './essentials/appinstantiate/appinstantiate';
 import './scss/app.scss';
 
+import { localDatabase } from './essentials/localDatabase/localDatabase';
+import { Router } from './essentials/router/router';
+//import { Auth } from './essentials/authentication/authentication';
+
 import { Login } from './components/login/login'
+import { RequestMachine } from './components/requestMachine/requestMachine'
 
 //Sub Pages
 let app_functions = {
-    "Login": {
+    /*"Login": {
         "construct": Login
-    },
+    }*/
     "Request Machine": {
-        //"construct": RequestMachine
+        "construct": RequestMachine
     }
     /*"Invoicing": {
         "Recent Invoices": {
