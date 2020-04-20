@@ -36,6 +36,7 @@ let Instantiate = class {
         let _initial_page = Object.values(this.app_functions)[0];
         let _initial_page_key = Object.keys(_initial_page)[0];
         let _initial_page_class = _initial_page.construct;
+        let _initial_page_params = _initial_page.params;
         history.pushState({
             recentInvoices: this.name_to_title(_initial_page_key),
             code: '0'
@@ -43,7 +44,7 @@ let Instantiate = class {
             this.name_to_title(_initial_page_key),
             `${window.location.origin}/${this.name_to_path(_initial_page_key)}`);
 
-        return new _initial_page_class();
+        return new _initial_page_class(_initial_page_params);
     }
 
     name_to_path(val) {

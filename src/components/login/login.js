@@ -12,7 +12,7 @@ let Login = class {
 
         //external elements
 
-        //internal elements
+        //internal elements -> this includes properties that were converted from parameters
         this.log_items = {
             userentry: '',
             password: ''
@@ -65,7 +65,10 @@ let Login = class {
     render() {
         let _html = '';
 
-        if (this.view == 'page') {
+        if (this.view == 'box') {
+            _html = ``;
+        }
+        else if (this.view === undefined || this.view == 'page') {
             _html = `
                 <br><br>
                 <div class="row" id="login-container">
@@ -86,9 +89,6 @@ let Login = class {
                     </form>
                 </div>
             `;
-        }
-        else if (this.view == 'box') {
-            _html = ``;
         }
 
         add_html({
