@@ -1,6 +1,7 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, append_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
-import './requestMachine.scss'
+import './requestMachine.scss';
+import axios from 'axios';
 
 let RequestMachine = class {
 
@@ -202,50 +203,71 @@ let RequestMachine = class {
     //methods
 
     //triggers
-    submitForm() {
+    // submitForm() {
 
-        append_html({
-            element: RENDER_SOURCE,
-            value: renderPreLoader(true, true)
-        });
+    //     append_html({
+    //         element: RENDER_SOURCE,
+    //         value: renderPreLoader(true, true)
+    //     });
 
-        /*let _body = {
-            dskEntry: '1',
-            vch: _voucher
-        };*/
+    //     /*let _body = {
+    //         dskEntry: '1',
+    //         vch: _voucher
+    //     };*/
 
-        console.log(this.machine)
+    //     console.log(this.machine)
 
-        this.insertForm(this.machine)
-            .then(res => {
-                console.log(res)
+    //     this.insertForm(this.machine)
+    //         .then(res => {
+    //             console.log(res)
 
-                if (!res.success) throw { incomplete: res };
+    //             if (!res.success) throw { incomplete: res };
 
-                M.toast({
-                    html: 'You have successfully submitted the voucher!',
-                    classes: 'green accent-4'
-                });
+    //             M.toast({
+    //                 html: 'You have successfully submitted the voucher!',
+    //                 classes: 'green accent-4'
+    //             });
 
-                this.constructor();
-            })
-            .catch(err => {
-                let _html = `${err}`;
+    //             this.constructor();
+    //         })
+    //         .catch(err => {
+    //             let _html = `${err}`;
                 
-                if (err.hasOwnProperty('incomplete')) {
-                    err.incomplete.error.forEach(elem => {
-                        _html += `${elem}<br>`;
+    //             if (err.hasOwnProperty('incomplete')) {
+    //                 err.incomplete.error.forEach(elem => {
+    //                     _html += `${elem}<br>`;
                         
-                    });
-                }
+    //                 });
+    //             }
 
-                console.log(err);
+    //             console.log(err);
 
-                M.toast({
-                    html: _html,
-                    classes: 'red accent-4'
+    //             M.toast({
+    //                 html: _html,
+    //                 classes: 'red accent-4'
+    //             });
+    //         });
+    // }
+
+    submitForm() {
+        try {
+            console.log('axios')
+            axios.get(SERVER_ATTR.PAGE_MACHINE) // <= proxy didn't work
+                .then(function (response) {
+                    // handle success
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
                 });
-            });
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     //controllers
