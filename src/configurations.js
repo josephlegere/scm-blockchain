@@ -1,10 +1,10 @@
 const company = '';
 
-const URL_SERVER = 'http://localhost/'; //for live
+const URL_SERVER = 'http://localhost:5000/'; //for live
 const ROOT_DIR = '/'; // => /gemsaccounting
 
 const SERVER_ATTR = {
-    PAGE_LOGIN: URL_SERVER + 'login-process.php'
+    PAGE_LOGIN: URL_SERVER + 'api/v1/machines'
 }
 
 const RENDER_SOURCE = '#content-display';
