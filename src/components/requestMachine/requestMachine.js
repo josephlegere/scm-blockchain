@@ -1,5 +1,5 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
-import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
+import { add_html, append_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import './requestMachine.scss'
 
 let RequestMachine = class {
@@ -204,6 +204,11 @@ let RequestMachine = class {
     //triggers
     submitForm() {
 
+        append_html({
+            element: RENDER_SOURCE,
+            value: renderPreLoader(true, true)
+        });
+
         /*let _body = {
             dskEntry: '1',
             vch: _voucher
@@ -211,22 +216,36 @@ let RequestMachine = class {
 
         console.log(this.machine)
 
-        /*this.insertPettyCashVoucher(_body)
+        this.insertForm(this.machine)
             .then(res => {
                 console.log(res)
+
+                if (!res.success) throw { incomplete: res };
 
                 M.toast({
                     html: 'You have successfully submitted the voucher!',
                     classes: 'green accent-4'
                 });
 
-                this.reset_page();
+                this.constructor();
             })
             .catch(err => {
-                let _html = '';
+                let _html = `${err}`;
+                
+                if (err.hasOwnProperty('incomplete')) {
+                    err.incomplete.error.forEach(elem => {
+                        _html += `${elem}<br>`;
+                        
+                    });
+                }
+
                 console.log(err);
-                _html = `${err}`;
-            });*/
+
+                M.toast({
+                    html: _html,
+                    classes: 'red accent-4'
+                });
+            });
     }
 
     //controllers
@@ -236,7 +255,7 @@ let RequestMachine = class {
             method: 'POST',
             body: body,
             headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
 
