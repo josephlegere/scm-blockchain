@@ -42,16 +42,11 @@ let remove_element = (params) => {
 let renderPreLoader = (isAppend, bg) => {
     let _loader = '';
 
-    if (bg) {
-        _loader += `<div style="position:fixed;top:0;left:0;z-index:1000;width:100%;height:100%;" class="">
-        </div>`;
-    }
-
-    _loader += `
+    _loader += `<div style="position:fixed;top:0;left:0;z-index:1000;width:100%;height:100%;" class="loading-wrapper">
         <div style="position:fixed;transform: translate(-50%, -50%); top: 50%; left: 50%;" class="loader-container">
             <div class="loader"></div>
         </div>
-    `;
+    </div>`;
 
     if (!isAppend) {
         add_html({

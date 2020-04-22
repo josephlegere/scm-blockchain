@@ -14,7 +14,19 @@ let RequestMachine = class {
 
         //internal elements -> this includes properties that were converted from parameters
         this.trigger_elements = {};
-        this.machine = {};
+        this.machine = {
+            "machine_item": "",
+            "quantity": null,
+            "user": {
+                "id": null,
+                "fname": "",
+                "lname": ""
+            },
+            "document": {
+                "source": "",
+                "name": ""
+            }
+        };
 
         this.set_default();
 
@@ -203,88 +215,58 @@ let RequestMachine = class {
     //methods
 
     //triggers
-    // submitForm() {
-
-    //     append_html({
-    //         element: RENDER_SOURCE,
-    //         value: renderPreLoader(true, true)
-    //     });
-
-    //     /*let _body = {
-    //         dskEntry: '1',
-    //         vch: _voucher
-    //     };*/
-
-    //     console.log(this.machine)
-
-    //     this.insertForm(this.machine)
-    //         .then(res => {
-    //             console.log(res)
-
-    //             if (!res.success) throw { incomplete: res };
-
-    //             M.toast({
-    //                 html: 'You have successfully submitted the voucher!',
-    //                 classes: 'green accent-4'
-    //             });
-
-    //             this.constructor();
-    //         })
-    //         .catch(err => {
-    //             let _html = `${err}`;
-                
-    //             if (err.hasOwnProperty('incomplete')) {
-    //                 err.incomplete.error.forEach(elem => {
-    //                     _html += `${elem}<br>`;
-                        
-    //                 });
-    //             }
-
-    //             console.log(err);
-
-    //             M.toast({
-    //                 html: _html,
-    //                 classes: 'red accent-4'
-    //             });
-    //         });
-    // }
-
-    submitForm() {
-        try {
-            console.log('axios')
-            axios.get(SERVER_ATTR.PAGE_MACHINE) // <= proxy didn't work
-                .then(function (response) {
-                    // handle success
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    // handle error
-                    console.log(error);
-                })
-                .then(function () {
-                    // always executed
-                });
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
 
     //controllers
-    async insertForm(value) { //insert form
-        const body = JSON.stringify(value);
-        const sendRequest = new Request(SERVER_ATTR.PAGE_MACHINE, {
-            method: 'POST',
-            body: body,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
+    async submitForm(value) { //insert form
+        try {
 
-        let list = await fetch(sendRequest); //fetch returns a Promise
-        let data = await list.json();
+            append_html({
+                element: RENDER_SOURCE,
+                value: renderPreLoader(true, true)
+            });
+            
+            const res = await axios.post(SERVER_ATTR.PAGE_MACHINE, this.machine, {
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            }) // <= proxy didn't work
+                .then(function (res) {
+                    // handle success
+                    console.log(res);
+                    let _res = res.data;
+                    
+                    if (!_res.success) throw { incomplete: _res };
 
-        return data;
+                    M.toast({
+                        html: 'You have successfully submitted the voucher!',
+                        classes: 'green accent-4'
+                    });
+                })
+                .catch(function (err) {
+                    // handle error
+                    console.log(err);
+                    let _html = `${err}`;
+
+                    M.toast({
+                        html: _html,
+                        classes: 'red accent-4'
+                    });
+                })
+                .then(function () {
+                    remove_element({ value: '.loading-wrapper' })
+                    // always executed
+                });
+                
+        }
+        catch (err) {
+            console.log(err);
+            let _html = `${err}`;
+
+            M.toast({
+                html: _html,
+                classes: 'red accent-4'
+            });
+        }
     }
 
 }
