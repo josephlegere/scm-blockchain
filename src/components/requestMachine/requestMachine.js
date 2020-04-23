@@ -23,8 +23,7 @@ let RequestMachine = class {
                 "lname": ""
             },
             "document": {
-                "source": "",
-                "name": ""
+                "data": ""
             }
         };
 
@@ -56,11 +55,13 @@ let RequestMachine = class {
                         if ((_value == null || _value == 0) && !(_excempt.includes(_key))) _empty_elements[_key] = _value;
                     });
 
-                    if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
+                    //if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
 
+                    //this.generateXML();
                     this.submitForm();
                 }
                 catch (err) {
+                    console.log(err)
                     let _html = '';
                     let _elements = err.elements;
                     let _details = err.details;
@@ -213,11 +214,19 @@ let RequestMachine = class {
     }
 
     //methods
+    generateXML(val) {
+        let _machine = val;
+        let xmlString = '<root att="val"><foo><bar>foobar</bar></foo></root>';
+        return xmlString;
+    }
 
     //triggers
 
     //controllers
     async submitForm(value) { //insert form
+
+        this.machine.document.data = this.generateXML(this.machine);
+
         try {
 
             append_html({

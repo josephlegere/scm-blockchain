@@ -1,1 +1,4 @@
 node_modules
+other_files
+.cache
+development
