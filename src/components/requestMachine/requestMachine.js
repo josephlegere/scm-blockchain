@@ -17,13 +17,10 @@ let RequestMachine = class {
         this.machine = {
             "machine_item": "",
             "quantity": null,
-            "user": {
+            "customer": {
                 "id": null,
                 "fname": "",
                 "lname": ""
-            },
-            "document": {
-                "data": ""
             }
         };
 
@@ -57,7 +54,6 @@ let RequestMachine = class {
 
                     //if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
 
-                    //this.generateXML();
                     this.submitForm();
                 }
                 catch (err) {
@@ -167,7 +163,8 @@ let RequestMachine = class {
                             <div class="col s12 m2"></div>
 
                             <div class="input-field col s12 m8">
-                                <select id="item-types" class="form-select-item" data-property="machine">
+                                <select id="item-types" class="form-select-item" data-property="machine_item">
+                                    <option value="" disabled selected>Choose a Machine</option>
                                     <option value="Compressor">Compressor</option>
                                     <option value="Condenser">Condenser</option>
                                 </select>
@@ -225,10 +222,13 @@ let RequestMachine = class {
     //controllers
     async submitForm(value) { //insert form
 
-        this.machine.document.data = this.generateXML(this.machine);
+        this.machine.customer = {
+            "id": 1,
+            "fname": "Joseph",
+            "lname": "Legere"
+        }
 
         try {
-
             append_html({
                 element: RENDER_SOURCE,
                 value: renderPreLoader(true, true)
