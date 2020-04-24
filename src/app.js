@@ -9,12 +9,16 @@ import { Router } from './essentials/router/router';
 
 import { Login } from './components/login/login'
 import { RequestMachine } from './components/requestMachine/requestMachine'
+import { PrototypeMachine } from './components/prototypeMachine/prototypeMachine'
 
 //Sub Pages
 let app_functions = {
-    "Login": {
+    /*"Login": {
         "construct": Login
-    }
+    },*/
+    "Prototype Machine": {
+        "construct": PrototypeMachine
+    },
     /*"Request Machine": {
         "construct": RequestMachine
     }*/
