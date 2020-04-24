@@ -1,5 +1,5 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
-import { add_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
+import { add_html, append_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import './login.scss';
 
 import { localDatabase } from '../../essentials/localDatabase/localDatabase';
@@ -11,7 +11,10 @@ let authService = new Auth();
 let Login = class { //get token from localDatabase, and display forms and pages
 
     constructor(view) {
+
         history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
+        this.page_container_title = 'login';
+        this.page_container = `#${this.page_container_title}`;
 
         //external elements
 
@@ -25,12 +28,14 @@ let Login = class { //get token from localDatabase, and display forms and pages
         this.set_default();
 
         this.render();
-        //this.triggers();
+        this.triggers();
         //this.checkLogged();
     }
 
     triggers() {
-        let trigger_1 = document.body.addEventListener('click', (e) => {
+        let root_element = document.querySelector(this.page_container);
+
+        let trigger_click_function = document.body.addEventListener('click', (e) => {
             let loginSubmit = e.target.closest('#login-submit');
 
             if (loginSubmit) {
@@ -45,7 +50,7 @@ let Login = class { //get token from localDatabase, and display forms and pages
             }
         });
 
-        let trigger_2 = document.body.addEventListener('input', (e) => {
+        let trigger_input_function = document.body.addEventListener('input', (e) => {
             let logInfo = e.target.closest('.log-info');
 
             if (logInfo) {
@@ -60,6 +65,20 @@ let Login = class { //get token from localDatabase, and display forms and pages
                 }
             }
         });
+
+        let trigger_click = root_element.addEventListener('click', trigger_click_function);
+        let trigger_input = root_element.addEventListener('input', trigger_input_function);
+
+        this.trigger_elements = {
+            'trigger click': {
+                event: 'click',
+                action: trigger_click
+            },
+            'trigger input': {
+                event: 'input',
+                action: trigger_input
+            }
+        }
     }
 
     set_default() {
@@ -73,23 +92,25 @@ let Login = class { //get token from localDatabase, and display forms and pages
         }
         else if (this.view === undefined || this.view == 'page') {
             _html = `
-                <br><br>
-                <div class="row" id="login-container">
-                    <form class="col s12">
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input id="userentry" type="email" class="log-info">
-                                <label for="userentry">Username / Email</label>
+                <div class="page-container" id="${this.page_container_title}">
+                    <br><br>
+                    <div class="row" id="login-container">
+                        <form class="col s12">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input id="userentry" type="email" class="log-info">
+                                    <label for="userentry">Username / Email</label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input id="password" type="password" class="log-info">
-                                <label for="password">Password</label>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <input id="password" type="password" class="log-info">
+                                    <label for="password">Password</label>
+                                </div>
                             </div>
-                        </div>
-                        <a class="waves-effect waves-light btn-large" id="login-submit">Sign In</a>
-                    </form>
+                            <a class="waves-effect waves-light btn-large" id="login-submit">Sign In</a>
+                        </form>
+                    </div>
                 </div>
             `;
         }
@@ -103,20 +124,29 @@ let Login = class { //get token from localDatabase, and display forms and pages
     //methods
 
     //triggers
-    async submitLogged () {
+    async submitLogged() {
+
+        append_html({
+            element: RENDER_SOURCE,
+            value: renderPreLoader(true, true)
+        });
+
         await authService.gainAccess(this.log_items.userentry, this.log_items.password) //auth service
-            .then(res => {
-                //if (Object.keys(res.records).length == 0) throw 'Incorrect credentials entered';
-                //localDB.set({ log_token: res.records.uniq });
-                let dashboard = new dashboardPage();
+            .then(tkn => {
+                remove_element({ value: '.loading-wrapper' })
+                console.log(tkn)
+                //if (Object.keys(tkn.records).length == 0) throw 'Incorrect credentials entered';
+                localDB.set({ log_token: tkn });
+                //let dashboard = new dashboardPage();
             })
             .catch(err => {
+                remove_element({ value: '.loading-wrapper' })
                 console.log(err);
             });
     }
 
     async checkLogged () {
-        let userLogged = localDB.get({ log_token: 1 });
+        let userLogged = localDB.get(['log_token']);
 
         if (!(Object.keys(userLogged).length === 0)) {
 

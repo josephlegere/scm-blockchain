@@ -38,24 +38,22 @@ let localDatabase = class {
         });
 
         //console.log('items stored: ' + feedback)
+        return true;
     }
 
     get(val) {
-        let _temp = val;
         let feedback = '';
-        let store_length = Object.entries(_temp).length;
+        let store_length = val.length;
         let _data = {};
 
-        Object.entries(_temp).forEach((elem, key) => {
-            let _key = elem[0];
-            let _value = elem[1];
-            let _res = localStorage.getItem(_key);
-            feedback += _key + ' => ' + _res + ((key + 1) < store_length ? ', ' : '');
+        val.forEach((elem, key) => {
+            let _res = localStorage.getItem(elem);
+            feedback += elem + ' => ' + _res + ((key + 1) < store_length ? ', ' : '');
 
             _res = this.toJSON(_res);
 
             if (!(_res == null)) {
-                _data[_key] = _res;
+                _data[elem] = _res;
             }
         });
 

@@ -1,4 +1,5 @@
-import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
+import { SERVER_ATTR } from '../../configurations';
+import axios from 'axios';
 
 let Auth = class { //Auth is only for authenticating this client to the remote server
 
@@ -9,12 +10,6 @@ let Auth = class { //Auth is only for authenticating this client to the remote s
         //internal elements
 
         this.set_default();
-
-        //this.triggers();
-        //this.checkLogged();
-    }
-
-    triggers() {
     }
 
     set_default() {
@@ -31,19 +26,29 @@ let Auth = class { //Auth is only for authenticating this client to the remote s
 
     gainAccess(userEntry, password) {
         return new Promise((resolve, reject) => {
-            let _body = {
+            let user = {
                 deviceEntry: 'web', //device entry e.g. web, mobile, desktop
-                ue: userentry,
-                pw: password
+                email: userEntry,
+                password: password
             };
 
-            this.getLog(_body)
-                .then(res => {
-                    //res.token
-                    resolve(res.token); //token verified and returned
+            const res = axios.post(SERVER_ATTR.PAGE_LOGIN, user, {
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            })
+                .then(function (res) {
+                    // handle success
+                    console.log(res);
+                    resolve(res.data); //token verified and returned
                 })
-                .catch(err => {
+                .catch(function (err) {
+                    // handle error
+                    console.log(err);
                     reject('Unable to gain access!');
+                })
+                .then(function () {
+                    // always executed
                 });
         });
     }
@@ -75,6 +80,7 @@ let Auth = class { //Auth is only for authenticating this client to the remote s
                 'Content-Type': 'application/json; charset=UTF-8'
             }
         });
+        console.log(sendRequest)
 
         let list = await fetch(sendRequest); //fetch returns a Promise
         let data = await list.json();

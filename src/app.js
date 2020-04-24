@@ -12,12 +12,12 @@ import { RequestMachine } from './components/requestMachine/requestMachine'
 
 //Sub Pages
 let app_functions = {
-    /*"Login": {
+    "Login": {
         "construct": Login
-    }*/
-    "Request Machine": {
-        "construct": RequestMachine
     }
+    /*"Request Machine": {
+        "construct": RequestMachine
+    }*/
     /*"Invoicing": {
         "Recent Invoices": {
             "construct": RecentInvoicesPage
