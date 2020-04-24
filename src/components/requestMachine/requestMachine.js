@@ -19,8 +19,7 @@ let RequestMachine = class {
             "quantity": null,
             "customer": {
                 "id": null,
-                "fname": "",
-                "lname": ""
+                "name": ""
             }
         };
 
@@ -224,8 +223,7 @@ let RequestMachine = class {
 
         this.machine.customer = {
             "id": 1,
-            "fname": "Joseph",
-            "lname": "Legere"
+            "name": "Joseph Legere"
         }
 
         try {
