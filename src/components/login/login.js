@@ -12,7 +12,7 @@ let Login = class { //get token from localDatabase, and display forms and pages
 
     constructor(view, mainpage) {
 
-        history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
+        //history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
         this.page_container_title = 'login';
         this.page_container = `#${this.page_container_title}`;
 

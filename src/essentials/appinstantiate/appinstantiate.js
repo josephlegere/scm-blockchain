@@ -34,11 +34,11 @@ let Instantiate = class {
     instantiate(_functions) {
         this.app_functions = _functions;
         let _initial_page = Object.values(this.app_functions)[0];
-        let _initial_page_key = Object.keys(_initial_page)[0];
+        let _initial_page_key = Object.keys(this.app_functions)[0];
         let _initial_page_class = _initial_page.construct;
         let _initial_page_params = _initial_page.params;
         history.pushState({
-            recentInvoices: this.name_to_title(_initial_page_key),
+            page: this.name_to_title(_initial_page_key),
             code: '0'
         },
             this.name_to_title(_initial_page_key),

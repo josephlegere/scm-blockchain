@@ -173,7 +173,7 @@ let PrototypeMachine = class {
             _html += `
                 <div class="col s12 m6">
                     <div class="card">
-                        <div class="card-content">
+                        <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
                             <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
                             <ul class="collection">
                                 <li class="collection-item">
@@ -208,6 +208,10 @@ let PrototypeMachine = class {
                                 </li>
                             </ul>
                             <p>Notes: ${(elem.hasOwnProperty('notes') ? `${elem.notes}` : 'n/a')}</p>
+                        </div>
+                        
+                        <div class="card-action"> <!-- --------------CARD ACTION-------------- -->
+                            <a href="#">View Machine</a>
                         </div>
                     </div>
                 </div>
