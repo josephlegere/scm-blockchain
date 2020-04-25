@@ -20,11 +20,7 @@ let RequestMachine = class {
         this.trigger_elements = {};
         this.machine = {
             "machine_item": "",
-            "quantity": null,
-            "customer": {
-                "id": null,
-                "name": ""
-            }
+            "quantity": null
         };
 
         this.set_default();
@@ -231,15 +227,11 @@ let RequestMachine = class {
         });
 
         let userLogged = localDB.get(['log_token']);
-        console.log(userLogged)
-        this.machine.customer = {
-            "id": 1,
-            "name": "Joseph Legere"
-        }
         
         const res = await axios.post(SERVER_ATTR.PAGE_MACHINE, this.machine, { // <= proxy didn't work
             headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
+                'Content-Type': 'application/json; charset=UTF-8',
+                'auth-token': userLogged.log_token
             }
         })
             .then(function (res) {
