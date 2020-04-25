@@ -10,13 +10,14 @@ let authService = new Auth();
 
 let Login = class { //get token from localDatabase, and display forms and pages
 
-    constructor(view) {
+    constructor(view, mainpage) {
 
         history.pushState({ login: 'loginPage1' }, 'loginPage1', `/login`);
         this.page_container_title = 'login';
         this.page_container = `#${this.page_container_title}`;
 
         //external elements
+        this.main = mainpage;
 
         //internal elements -> this includes properties that were converted from parameters
         this.log_items = {
@@ -90,7 +91,7 @@ let Login = class { //get token from localDatabase, and display forms and pages
         if (this.view == 'box') {
             _html = ``;
         }
-        else if (this.view === undefined || this.view == 'page') {
+        else if (this.view === undefined || this.view === null || this.view == 'page') {
             _html = `
                 <div class="page-container" id="${this.page_container_title}">
                     <br><br>
@@ -137,7 +138,7 @@ let Login = class { //get token from localDatabase, and display forms and pages
                 console.log(tkn)
                 //if (Object.keys(tkn.records).length == 0) throw 'Incorrect credentials entered';
                 localDB.set({ log_token: tkn });
-                //let dashboard = new dashboardPage();
+                let dashboard = new this.main();
             })
             .catch(err => {
                 remove_element({ value: '.loading-wrapper' })

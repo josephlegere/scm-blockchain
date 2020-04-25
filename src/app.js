@@ -13,15 +13,12 @@ import { PrototypeMachine } from './components/prototypeMachine/prototypeMachine
 
 //Sub Pages
 let app_functions = {
-    /*"Login": {
-        "construct": Login
-    },*/
     "Prototype Machine": {
         "construct": PrototypeMachine
     },
-    /*"Request Machine": {
+    "Request Machine": {
         "construct": RequestMachine
-    }*/
+    }
     /*"Invoicing": {
         "Recent Invoices": {
             "construct": RecentInvoicesPage
@@ -34,7 +31,7 @@ let app_functions = {
 };
 
 let localDB = new localDatabase();
-//let router = new Router(app_functions);
+let router = new Router(app_functions);
 let app_instance = new Instantiate();
 
 let dashboardPage = class { //wrapper for the app itself, that would supposedly also jumpstart the app
@@ -60,15 +57,20 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
 
     render() {
         let _html = '';
-
+        console.log('dashboard')
         _html = `
-            <a href="#" data-target="main-side-navi" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-            <div id="content-display" style="padding-left:300px">
-            </div>
+            <nav>
+                <div class="nav-wrapper">
+
+                    <ul id="navi-menu-items" class="hide-on-med-and-down">
+                    </ul>
+                </div>
+            </nav>
+            <div id="content-display" style=""></div>
         `;
 
         add_html({
-            element: RENDER_SOURCE,
+            element: 'body',
             value: _html
         });
 
@@ -126,4 +128,10 @@ let dashboardPage = class { //wrapper for the app itself, that would supposedly 
 }
 
 //INIT App
-app_instance.runApp(dashboardPage);
+let userLogged = localDB.get(['log_token']);
+if (userLogged === null) {
+    let loginPage = new Login(null, dashboardPage);
+}
+else {
+    app_instance.runApp(dashboardPage);
+}

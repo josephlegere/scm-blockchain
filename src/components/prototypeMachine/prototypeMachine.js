@@ -3,6 +3,10 @@ import { add_html, append_html, remove_element, renderPreLoader, numberWithComma
 import './prototypeMachine.scss';
 import axios from 'axios';
 
+import { localDatabase } from '../../essentials/localDatabase/localDatabase';
+
+let localDB = new localDatabase();
+
 let PrototypeMachine = class {
 
     constructor() {
@@ -225,6 +229,7 @@ let PrototypeMachine = class {
                 console.log(res)
                 let _machines = res.data;
 
+                if (!res.success) throw res.error;
                 if (res.count < 1) throw 'No machines are listed yet.';
 
                 this.renderList(_machines, '#prototype-list');
@@ -238,12 +243,14 @@ let PrototypeMachine = class {
 
     //controllers
     async fetchMachines(value) { //fetch clients and companies
+        let userLogged = localDB.get(['log_token']);
         const body = JSON.stringify(value);
         const sendRequest = new Request(SERVER_ATTR.PAGE_MACHINE, {
             method: 'GET',
             //body: body,
             headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
+                'Content-Type': 'application/json; charset=UTF-8',
+                'auth-token': userLogged.log_token
             }
         });
 

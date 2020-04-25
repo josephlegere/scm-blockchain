@@ -58,8 +58,7 @@ let localDatabase = class {
         });
 
         //console.log('items retrieved: ' + feedback)
-
-        return _data;
+        return (Object.keys(_data).length > 0 ? _data : null);
     }
 }
 
