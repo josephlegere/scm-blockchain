@@ -3,6 +3,10 @@ import { add_html, append_html, remove_element, renderPreLoader, numberWithComma
 import './requestMachine.scss';
 import axios from 'axios';
 
+import { localDatabase } from '../../essentials/localDatabase/localDatabase';
+
+let localDB = new localDatabase();
+
 let RequestMachine = class {
 
     constructor() {
@@ -226,6 +230,8 @@ let RequestMachine = class {
             value: renderPreLoader(true, true)
         });
 
+        let userLogged = localDB.get(['log_token']);
+        console.log(userLogged)
         this.machine.customer = {
             "id": 1,
             "name": "Joseph Legere"

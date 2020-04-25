@@ -41,6 +41,7 @@ let PrototypeMachine = class {
 
         let trigger_click_function = async (e) => {
             let submitForm = e.target.closest('#submit-form');
+            let modalOpen = e.target.closest('.modal-open');
 
             if (submitForm) {
                 console.log(this.machine)
@@ -84,6 +85,10 @@ let PrototypeMachine = class {
                     });
                 }
             }
+
+            if (modalOpen) {
+                this.trigger_elements['page modal'].open();
+            }
         }
 
         let trigger_change_function = async (e) => {
@@ -122,6 +127,9 @@ let PrototypeMachine = class {
         let machine_select = document.querySelector('#item-types');
         let machine_instance_select = M.FormSelect.init(machine_select, {});
 
+        let pageModal = document.querySelector('#page-modal');
+        let pageModal_instance = M.Modal.init(pageModal, {});
+
         this.trigger_elements = {
             'trigger click': {
                 event: 'click',
@@ -135,7 +143,8 @@ let PrototypeMachine = class {
                 event: 'input',
                 action: trigger_input
             },
-            'machine': machine_instance_select
+            'machine': machine_instance_select,
+            'page modal': pageModal_instance
         }
     }
 
@@ -156,6 +165,16 @@ let PrototypeMachine = class {
                 <div class="row left-align" id="prototype-list">
                 </div>
             </div>
+            
+            <div id="page-modal" class="modal">
+                <div class="modal-content">
+                    <iframe>
+                    </iframe>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-close waves-effect waves-green btn-flat">Agree</button>
+                </div>
+            </div>
         `;
 
         add_html({
@@ -168,7 +187,7 @@ let PrototypeMachine = class {
     //methods
     renderList (list, container) {
         let _html = '';
-
+        console.log(list)
         list.forEach(elem => {
             _html += `
                 <div class="col s12 m6">
@@ -182,7 +201,7 @@ let PrototypeMachine = class {
                                             Design
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('design') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('design') && elem.design.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -202,7 +221,7 @@ let PrototypeMachine = class {
                                             Deliver
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') && elem.deliver.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -211,7 +230,7 @@ let PrototypeMachine = class {
                         </div>
                         
                         <div class="card-action"> <!-- --------------CARD ACTION-------------- -->
-                            <a href="#">View Machine</a>
+                            <button class="waves-effect waves-light btn modal-open">Modal</button>
                         </div>
                     </div>
                 </div>
