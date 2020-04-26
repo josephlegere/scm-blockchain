@@ -226,7 +226,8 @@ let PrototypeMachine = class {
                                     </div>
                                 </li>
                             </ul>
-                            <p>Notes: ${(elem.hasOwnProperty('notes') ? `${elem.notes}` : 'n/a')}</p>
+                            <p>Quantity: <b>${elem.quantity} Units</b></p>
+                            <p>Notes: ${(elem.hasOwnProperty('notes') ? `<b>${elem.notes}</b>` : 'n/a')}</p>
                         </div>
                         
                         <div class="card-action"> <!-- --------------CARD ACTION-------------- -->

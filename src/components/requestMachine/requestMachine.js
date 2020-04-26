@@ -149,8 +149,8 @@ let RequestMachine = class {
                 <div class="row">
                     <div class="col s12">
                         <h6>
-                            <div>Form Number</div><br>
-                            <span id="form-number" class="form-number">#####</span>
+                            <div>Machine Form</div><br>
+                            <span id="machine-form" class="machine-form">#####</span>
                         </h6>
                     </div>
                 </div>
@@ -166,6 +166,7 @@ let RequestMachine = class {
                                     <option value="" disabled selected>Choose a Machine</option>
                                     <option value="Compressor">Compressor</option>
                                     <option value="Condenser">Condenser</option>
+                                    <option value="Condenser">Insulator</option>
                                 </select>
                                 <label for="machine">Machine</label>
                             </div>
