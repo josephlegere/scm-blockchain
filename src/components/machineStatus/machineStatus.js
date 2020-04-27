@@ -1,32 +1,23 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, append_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
-import './prototypeMachine.scss';
+import './machineStatus.scss';
 import axios from 'axios';
 
 import { localDatabase } from '../../essentials/localDatabase/localDatabase';
 
 let localDB = new localDatabase();
 
-let PrototypeMachine = class {
+let MachineStatus = class {
 
     constructor() {
 
-        this.page_container_title = 'prototype-machine';
+        this.page_container_title = 'machine-status';
         this.page_container = `#${this.page_container_title}`;
 
         //external elements
 
         //internal elements -> this includes properties that were converted from parameters
         this.trigger_elements = {};
-        this.machines = [];
-        this.machine = {
-            "machine_item": "",
-            "quantity": null,
-            "customer": {
-                "id": null,
-                "name": ""
-            }
-        };
 
         this.set_default();
 
@@ -40,51 +31,7 @@ let PrototypeMachine = class {
         let root_element = document.querySelector(this.page_container);
 
         let trigger_click_function = async (e) => {
-            let submitForm = e.target.closest('#submit-form');
             let card = e.target.closest('.card');
-
-            if (submitForm) {
-                console.log(this.machine)
-                let _empty_elements = {};
-                let _details = {};
-
-                try {
-                    let _excempt = [];
-                    let _details = Object.assign({}, this.machine_details, this.machine_particulars_details);
-
-                    Object.entries(this.machine).forEach(elem => { //retrieve blank elements
-                        let _key = elem[0];
-                        let _value = elem[1];
-
-                        if ((_value == null || _value == 0) && !(_excempt.includes(_key))) _empty_elements[_key] = _value;
-                    });
-
-                    //if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
-
-                    this.submitForm();
-                }
-                catch (err) {
-                    console.log(err)
-                    let _html = '';
-                    let _elements = err.elements;
-                    let _details = err.details;
-                    _html = `Some elements has no value: ${_elements}`;
-
-                    if (typeof _elements === 'object') {
-                        let _temp = '';
-
-                        Object.keys(_elements).forEach((elem, key) => {
-                            _temp += `${(key == 0 ? '' : ',<br>') + _details[elem].display}`;
-                        });
-                        _html = `Elements:<br>${_temp}<br>has no value.`;
-                    }
-
-                    M.toast({
-                        html: _html,
-                        classes: 'red accent-4'
-                    });
-                }
-            }
 
             if (card) {
                 let _unique = card.dataset.unique;
@@ -93,48 +40,19 @@ let PrototypeMachine = class {
 
                 if (viewDocument) {
                     this.getDocument(_unique, 'view');
-                    //document.getElementById('document-viewer').setAttribute('src', 'http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml');
-                    //this.trigger_elements['page modal'].open();
-                    //window.open("http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml", "_blank")
                 }
             }
         }
 
         let trigger_change_function = async (e) => {
-            let formSelectItem = e.target.closest('.form-select-item');
-
-            if (formSelectItem) {
-                let _property = formSelectItem.dataset.property;
-                let _value = formSelectItem.value;
-                this.machine[_property] = _value;
-            }
         }
 
         let trigger_input_function = async (e) => {
-            let formInputItem = e.target.closest('.form-input-item');
-
-            if (formInputItem) {
-                let _property = formInputItem.dataset.property;
-                let _value = formInputItem.value;
-
-                this.machine[_property] = _value;
-
-                if (_property == 'item') {
-                    this.machine.itemcode = null;
-                    clearTimeout(this.timers.items);
-                    this.timers.items = setTimeout(() => {
-                        this.suggestItems(_value, 'items', (this.machine.itemtype ? this.machine.itemtype : null));
-                    }, 1000);
-                }
-            }
         }
 
         let trigger_click = root_element.addEventListener('click', trigger_click_function);
         let trigger_change = root_element.addEventListener('change', trigger_change_function);
         let trigger_input = root_element.addEventListener('input', trigger_input_function);
-
-        let pageModal = document.querySelector('#page-modal');
-        let pageModal_instance = M.Modal.init(pageModal, {});
 
         this.trigger_elements = {
             'trigger click': {
@@ -148,8 +66,7 @@ let PrototypeMachine = class {
             'trigger input': {
                 event: 'input',
                 action: trigger_input
-            },
-            'page modal': pageModal_instance
+            }
         }
     }
 
@@ -163,19 +80,11 @@ let PrototypeMachine = class {
             <div class="page-container" id="${this.page_container_title}">
                 <div class="row">
                     <div class="col s12">
-                        <h3>Prototype List</h3>
+                        <h3>Order List</h3>
                     </div>
                 </div>
 
                 <div class="row left-align" id="prototype-list">
-                </div>
-            </div>
-            
-            <div id="page-modal" class="modal">
-                <div class="modal-content">
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-close waves-effect waves-green btn-flat">Agree</button>
                 </div>
             </div>
         `;
@@ -188,7 +97,7 @@ let PrototypeMachine = class {
     }
 
     //methods
-    renderList (list, container) {
+    renderList(list, container) {
         let _html = '';
         console.log(list)
         list.forEach(elem => {
@@ -196,7 +105,8 @@ let PrototypeMachine = class {
                 <div class="col s12 m6">
                     <div class="card" data-unique="${elem._id}">
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
-                            <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
+                            <span class="card-title"><b>${elem.machine_item}</b></span>
+                            <span class=""><b>Status</b></span>
                             <ul class="collection">
                                 <li class="collection-item">
                                     <div class="row">
@@ -234,7 +144,7 @@ let PrototypeMachine = class {
                         </div>
                         
                         <div class="card-action"> <!-- --------------CARD ACTION-------------- -->
-                            <button class="waves-effect waves-light btn view-document">View Request</button>
+                            <button class="waves-effect waves-light btn view-document">View Document</button>
                         </div>
                     </div>
                 </div>
@@ -289,7 +199,7 @@ let PrototypeMachine = class {
     //controllers
     async fetchMachines() { //fetch clients and companies
         let userLogged = localDB.get(['log_token']);
-        const sendRequest = new Request(SERVER_ATTR.PAGE_MACHINE, {
+        const sendRequest = new Request(SERVER_ATTR.PAGE_MACHINE_CUSTOMER, {
             method: 'GET',
             //body: body,
             headers: {
@@ -318,6 +228,7 @@ let PrototypeMachine = class {
 
         return data;
     }
+
 }
 
-export { PrototypeMachine };
+export { MachineStatus };

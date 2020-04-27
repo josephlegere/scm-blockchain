@@ -5,6 +5,7 @@ const ROOT_DIR = '/'; // => /gemsaccounting
 
 const SERVER_ATTR = {
     PAGE_MACHINE: URL_SERVER + 'machines',
+    PAGE_MACHINE_CUSTOMER: URL_SERVER + 'machines/customer',
     PAGE_LOGIN: URL_SERVER + 'user/login'
 }
 
