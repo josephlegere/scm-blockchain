@@ -41,7 +41,7 @@ let PrototypeMachine = class {
 
         let trigger_click_function = async (e) => {
             let submitForm = e.target.closest('#submit-form');
-            let modalOpen = e.target.closest('.modal-open');
+            let card = e.target.closest('.card');
 
             if (submitForm) {
                 console.log(this.machine)
@@ -86,8 +86,17 @@ let PrototypeMachine = class {
                 }
             }
 
-            if (modalOpen) {
-                this.trigger_elements['page modal'].open();
+            if (card) {
+                let _unique = card.dataset.unique;
+
+                let viewDocument = e.target.closest('.view-document');
+
+                if (viewDocument) {
+                    this.getDocument(_unique, 'view');
+                    //document.getElementById('document-viewer').setAttribute('src', 'http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml');
+                    //this.trigger_elements['page modal'].open();
+                    //window.open("http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml", "_blank")
+                }
             }
         }
 
@@ -168,8 +177,6 @@ let PrototypeMachine = class {
             
             <div id="page-modal" class="modal">
                 <div class="modal-content">
-                    <iframe>
-                    </iframe>
                 </div>
                 <div class="modal-footer">
                     <button class="modal-close waves-effect waves-green btn-flat">Agree</button>
@@ -191,7 +198,7 @@ let PrototypeMachine = class {
         list.forEach(elem => {
             _html += `
                 <div class="col s12 m6">
-                    <div class="card">
+                    <div class="card" data-unique="${elem._id}">
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
                             <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
                             <ul class="collection">
@@ -231,7 +238,7 @@ let PrototypeMachine = class {
                         </div>
                         
                         <div class="card-action"> <!-- --------------CARD ACTION-------------- -->
-                            <button class="waves-effect waves-light btn modal-open">Modal</button>
+                            <button class="waves-effect waves-light btn view-document">View Document</button>
                         </div>
                     </div>
                 </div>
@@ -246,9 +253,7 @@ let PrototypeMachine = class {
 
     //triggers
     getMachines() {
-        let _body = '';
-
-        this.fetchMachines(_body)
+        this.fetchMachines()
             .then(res => {
                 console.log(res)
                 let _machines = res.data;
@@ -265,10 +270,29 @@ let PrototypeMachine = class {
             });
     }
 
+    getDocument(uniq, type) {
+        let url = SERVER_ATTR.PAGE_MACHINE + `/${type}/${uniq}`;
+
+        this.accessDocuments(url)
+            .then(res => {
+                console.log(res);
+                if (res.success) {
+                    window.open(`${res.data.url.data}`, "_blank");
+                }
+                else {
+                    alert(res.data.url.comment);
+                }
+            })
+            .catch(err => {
+                let _html = '';
+                console.log(err);
+                _html = `${err}`;
+            });
+    }
+
     //controllers
-    async fetchMachines(value) { //fetch clients and companies
+    async fetchMachines() { //fetch clients and companies
         let userLogged = localDB.get(['log_token']);
-        const body = JSON.stringify(value);
         const sendRequest = new Request(SERVER_ATTR.PAGE_MACHINE, {
             method: 'GET',
             //body: body,
@@ -284,7 +308,20 @@ let PrototypeMachine = class {
         return data;
     }
 
+    async accessDocuments(url) { //fetch document
+        const sendRequest = new Request(url, {
+            method: 'GET',
+            //body: body,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        });
 
+        let list = await fetch(sendRequest); //fetch returns a Promise
+        let data = await list.json();
+
+        return data;
+    }
 }
 
 export { PrototypeMachine };
