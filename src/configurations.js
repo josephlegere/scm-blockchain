@@ -13,5 +13,6 @@ const RENDER_SOURCE = '#content-display';
 
 export {
     SERVER_ATTR,
-    RENDER_SOURCE
+    RENDER_SOURCE,
+    URL_SERVER
 };

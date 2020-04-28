@@ -1,4 +1,4 @@
-import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
+import { SERVER_ATTR, URL_SERVER, RENDER_SOURCE } from '../../configurations';
 import { add_html, append_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
 import './prototypeMachine.scss';
 import axios from 'axios';
@@ -20,6 +20,7 @@ let PrototypeMachine = class {
         this.trigger_elements = {};
         this.machines = [];
         this.form = {};
+        this.form_process = '';
 
         this.set_default();
 
@@ -40,48 +41,26 @@ let PrototypeMachine = class {
                 let submitForm = e.target.closest('#submit-form');
                 if (submitForm) {
                     console.log(this.form)
-                    let _empty_elements = {};
 
-                    /*try {
-                        let _excempt = [];
-
-                        Object.entries(this.form).forEach(elem => { //retrieve blank elements
-                            let _key = elem[0];
-                            let _value = elem[1];
-
-                            if ((_value == null || _value == 0) && !(_excempt.includes(_key))) _empty_elements[_key] = _value;
-                        });
-
-                        //if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
-
-                        this.submitForm();
+                    try {
+                        this.addProcessRequest();
                     }
                     catch (err) {
                         console.log(err)
-                        let _html = '';
-                        let _elements = err.elements;
-                        let _details = err.details;
-                        _html = `Some elements has no value: ${_elements}`;
-
-                        if (typeof _elements === 'object') {
-                            let _temp = '';
-
-                            Object.keys(_elements).forEach((elem, key) => {
-                                _temp += `${(key == 0 ? '' : ',<br>') + _details[elem].display}`;
-                            });
-                            _html = `Elements:<br>${_temp}<br>has no value.`;
-                        }
 
                         M.toast({
-                            html: _html,
+                            html: err,
                             classes: 'red accent-4'
                         });
-                    }*/
+                    }
                 }
             }
 
             if (card) {
                 let _unique = card.dataset.unique;
+                let _design = card.dataset.design;
+                let _parts = card.dataset.parts;
+                let _delivery = card.dataset.delivery;
 
                 let viewDocument = e.target.closest('.view-document');
                 let machineDesign = e.target.closest('.machine-design');
@@ -95,8 +74,11 @@ let PrototypeMachine = class {
                     //window.open("http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml", "_blank")
                 }
                 else if (machineDesign) {
-                    this.render_designRequest(_unique);
-                    this.trigger_elements['page modal'].open();
+                    if (_design === 'none') {
+                        this.render_designRequest(_unique);
+                        this.trigger_elements['page modal'].open();
+                    }
+
                 }
             }
         }
@@ -187,7 +169,7 @@ let PrototypeMachine = class {
         list.forEach(elem => {
             _html += `
                 <div class="col s12 m6">
-                    <div class="card" data-unique="${elem._id}">
+                    <div class="card" data-unique="${elem._id}" data-design="${(elem.hasOwnProperty('design') ? `pending` : 'none')}" data-parts="" data-delivery="">
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
                             <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
                             <ul class="collection">
@@ -197,7 +179,7 @@ let PrototypeMachine = class {
                                             Design
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('design') && elem.design.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('design') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -207,7 +189,7 @@ let PrototypeMachine = class {
                                             Product Parts
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.items > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -217,7 +199,7 @@ let PrototypeMachine = class {
                                             Deliver
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') && elem.deliver.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -243,13 +225,14 @@ let PrototypeMachine = class {
     render_designRequest (id) {
         let _html = '';
         this.form = {
-            'function': '',
+            'functionality': '',
             'appearance': '',
             'content': '',
             'materials': '',
             'size': '',
-            'prototype': id
+            'machine': id
         }
+        this.form_process = 'designs';
 
         _html = `
             <div class="row center">
@@ -267,8 +250,8 @@ let PrototypeMachine = class {
                         <div class="col s12 m2"></div>
 
                         <div class="input-field col s12 m8">
-                            <input placeholder="" id="function" type="text" class="form-input-item" data-property="function">
-                            <label for="function">Function</label>
+                            <input placeholder="" id="functionality" type="text" class="form-input-item" data-property="functionality">
+                            <label for="functionality">Functionality</label>
                         </div>
                         <div class="col s12 m2"></div>
                     </div>
@@ -348,8 +331,8 @@ let PrototypeMachine = class {
             });
     }
 
-    getDocument(uniq, type) {
-        let url = SERVER_ATTR.PAGE_MACHINE + `/${type}/${uniq}`;
+    getDocument(uniq, action) {
+        let url = SERVER_ATTR.PAGE_MACHINE + `/${action}/${uniq}`;
 
         this.accessDocuments(url)
             .then(res => {
@@ -362,6 +345,35 @@ let PrototypeMachine = class {
                 }
             })
             .catch(err => {
+                let _html = '';
+                console.log(err);
+                _html = `${err}`;
+            });
+    }
+
+    addProcessRequest() {
+        append_html({
+            element: RENDER_SOURCE,
+            value: renderPreLoader(true, true)
+        });
+
+        let url = URL_SERVER + `${this.form_process}`;
+
+        this.insertProcessRequest(url, this.form)
+            .then(res => {
+                remove_element({ value: '.loading-wrapper' })
+                console.log(res);
+                let data = res.data;
+
+                if (!res.success) throw { incomplete: data };
+
+                M.toast({
+                    html: 'You have successfully submitted the voucher!',
+                    classes: 'green accent-4'
+                });
+            })
+            .catch(err => {
+                remove_element({ value: '.loading-wrapper' })
                 let _html = '';
                 console.log(err);
                 _html = `${err}`;
@@ -392,6 +404,24 @@ let PrototypeMachine = class {
             //body: body,
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'
+            }
+        });
+
+        let list = await fetch(sendRequest); //fetch returns a Promise
+        let data = await list.json();
+
+        return data;
+    }
+
+    async insertProcessRequest(url, body) {
+        let userLogged = localDB.get(['log_token']);
+        let _body = JSON.stringify(body);
+        const sendRequest = new Request(url, {
+            method: 'POST',
+            body: _body,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'auth-token': userLogged.log_token
             }
         });
 
