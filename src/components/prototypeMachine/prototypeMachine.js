@@ -19,14 +19,7 @@ let PrototypeMachine = class {
         //internal elements -> this includes properties that were converted from parameters
         this.trigger_elements = {};
         this.machines = [];
-        this.machine = {
-            "machine_item": "",
-            "quantity": null,
-            "customer": {
-                "id": null,
-                "name": ""
-            }
-        };
+        this.form = {};
 
         this.set_default();
 
@@ -40,49 +33,50 @@ let PrototypeMachine = class {
         let root_element = document.querySelector(this.page_container);
 
         let trigger_click_function = async (e) => {
-            let submitForm = e.target.closest('#submit-form');
+            let modalContent = e.target.closest('.modal-content');
             let card = e.target.closest('.card');
+            
+            if (modalContent) {
+                let submitForm = e.target.closest('#submit-form');
+                if (submitForm) {
+                    console.log(this.form)
+                    let _empty_elements = {};
 
-            if (submitForm) {
-                console.log(this.machine)
-                let _empty_elements = {};
-                let _details = {};
+                    /*try {
+                        let _excempt = [];
 
-                try {
-                    let _excempt = [];
-                    let _details = Object.assign({}, this.machine_details, this.machine_particulars_details);
+                        Object.entries(this.form).forEach(elem => { //retrieve blank elements
+                            let _key = elem[0];
+                            let _value = elem[1];
 
-                    Object.entries(this.machine).forEach(elem => { //retrieve blank elements
-                        let _key = elem[0];
-                        let _value = elem[1];
-
-                        if ((_value == null || _value == 0) && !(_excempt.includes(_key))) _empty_elements[_key] = _value;
-                    });
-
-                    //if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
-
-                    this.submitForm();
-                }
-                catch (err) {
-                    console.log(err)
-                    let _html = '';
-                    let _elements = err.elements;
-                    let _details = err.details;
-                    _html = `Some elements has no value: ${_elements}`;
-
-                    if (typeof _elements === 'object') {
-                        let _temp = '';
-
-                        Object.keys(_elements).forEach((elem, key) => {
-                            _temp += `${(key == 0 ? '' : ',<br>') + _details[elem].display}`;
+                            if ((_value == null || _value == 0) && !(_excempt.includes(_key))) _empty_elements[_key] = _value;
                         });
-                        _html = `Elements:<br>${_temp}<br>has no value.`;
-                    }
 
-                    M.toast({
-                        html: _html,
-                        classes: 'red accent-4'
-                    });
+                        //if (Object.keys(_empty_elements).length > 0) throw { elements: _empty_elements, details: _details };
+
+                        this.submitForm();
+                    }
+                    catch (err) {
+                        console.log(err)
+                        let _html = '';
+                        let _elements = err.elements;
+                        let _details = err.details;
+                        _html = `Some elements has no value: ${_elements}`;
+
+                        if (typeof _elements === 'object') {
+                            let _temp = '';
+
+                            Object.keys(_elements).forEach((elem, key) => {
+                                _temp += `${(key == 0 ? '' : ',<br>') + _details[elem].display}`;
+                            });
+                            _html = `Elements:<br>${_temp}<br>has no value.`;
+                        }
+
+                        M.toast({
+                            html: _html,
+                            classes: 'red accent-4'
+                        });
+                    }*/
                 }
             }
 
@@ -90,12 +84,19 @@ let PrototypeMachine = class {
                 let _unique = card.dataset.unique;
 
                 let viewDocument = e.target.closest('.view-document');
+                let machineDesign = e.target.closest('.machine-design');
+                let machineParts = e.target.closest('.machine-parts');
+                let machineDeliver = e.target.closest('.machine-deliver');
 
                 if (viewDocument) {
                     this.getDocument(_unique, 'view');
                     //document.getElementById('document-viewer').setAttribute('src', 'http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml');
                     //this.trigger_elements['page modal'].open();
                     //window.open("http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml", "_blank")
+                }
+                else if (machineDesign) {
+                    this.render_designRequest(_unique);
+                    this.trigger_elements['page modal'].open();
                 }
             }
         }
@@ -106,7 +107,7 @@ let PrototypeMachine = class {
             if (formSelectItem) {
                 let _property = formSelectItem.dataset.property;
                 let _value = formSelectItem.value;
-                this.machine[_property] = _value;
+                this.form[_property] = _value;
             }
         }
 
@@ -117,15 +118,7 @@ let PrototypeMachine = class {
                 let _property = formInputItem.dataset.property;
                 let _value = formInputItem.value;
 
-                this.machine[_property] = _value;
-
-                if (_property == 'item') {
-                    this.machine.itemcode = null;
-                    clearTimeout(this.timers.items);
-                    this.timers.items = setTimeout(() => {
-                        this.suggestItems(_value, 'items', (this.machine.itemtype ? this.machine.itemtype : null));
-                    }, 1000);
-                }
+                this.form[_property] = _value;
             }
         }
 
@@ -169,13 +162,13 @@ let PrototypeMachine = class {
 
                 <div class="row left-align" id="prototype-list">
                 </div>
-            </div>
-            
-            <div id="page-modal" class="modal">
-                <div class="modal-content">
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-close waves-effect waves-green btn-flat">Agree</button>
+                
+                <div id="page-modal" class="modal">
+                    <div class="modal-header">
+                        <button class="modal-close waves-effect waves-green btn-flat right">Close</button>
+                    </div>
+                    <div class="modal-content">
+                    </div>
                 </div>
             </div>
         `;
@@ -198,7 +191,7 @@ let PrototypeMachine = class {
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
                             <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
                             <ul class="collection">
-                                <li class="collection-item">
+                                <li class="collection-item machine-design">
                                     <div class="row">
                                         <div class="col s6">
                                             Design
@@ -208,7 +201,7 @@ let PrototypeMachine = class {
                                         </div>
                                     </div>
                                 </li>
-                                <li class="collection-item">
+                                <li class="collection-item machine-parts">
                                     <div class="row">
                                         <div class="col s6">
                                             Product Parts
@@ -218,7 +211,7 @@ let PrototypeMachine = class {
                                         </div>
                                     </div>
                                 </li>
-                                <li class="collection-item">
+                                <li class="collection-item machine-deliver">
                                     <div class="row">
                                         <div class="col s6">
                                             Deliver
@@ -243,6 +236,95 @@ let PrototypeMachine = class {
 
         add_html({
             element: container,
+            value: _html
+        });
+    }
+
+    render_designRequest (id) {
+        let _html = '';
+        this.form = {
+            'function': '',
+            'appearance': '',
+            'content': '',
+            'materials': '',
+            'size': '',
+            'prototype': id
+        }
+
+        _html = `
+            <div class="row center">
+                <div class="col s12">
+                    <h4>
+                        <div>Design</div>
+                    </h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <form class="col s12 center">
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="function" type="text" class="form-input-item" data-property="function">
+                            <label for="function">Function</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="appearance" type="text" class="form-input-item" data-property="appearance">
+                            <label for="appearance">Appearance</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="content" type="text" class="form-input-item" data-property="content">
+                            <label for="content">Content</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="materials" type="text" class="form-input-item" data-property="materials">
+                            <label for="materials">Materials</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="size" type="number" class="form-input-item" min="0" max="15" data-property="size">
+                            <label for="size">Size</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 offset-m2 m8">
+                            <a class="waves-effect waves-light btn right" id="submit-form">Submit Design</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        `;
+
+        add_html({
+            element: '.modal-content',
             value: _html
         });
     }

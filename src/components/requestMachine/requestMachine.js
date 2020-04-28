@@ -177,7 +177,7 @@ let RequestMachine = class {
                             <div class="col s12 m2"></div>
 
                             <div class="input-field col s12 m8">
-                                <input placeholder="" id="quantity" type="number" class="form-input-item" min="0" max="15" value="0" data-property="quantity">
+                                <input placeholder="" id="quantity" type="number" class="form-input-item" min="0" max="15" data-property="quantity">
                                 <label for="quantity">Quantity</label>
                             </div>
                             <div class="col s12 m2"></div>

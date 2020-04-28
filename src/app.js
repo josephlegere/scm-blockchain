@@ -22,16 +22,16 @@ let app_functions = {
     },
     "Prototype Machine": {
         "construct": PrototypeMachine
+    },
+    "Design Machine": {
+        "construct": null
+    },
+    "Machine Parts": {
+        "construct": null
+    },
+    "Deliver Machine": {
+        "construct": null
     }
-    /*"Invoicing": {
-        "Recent Invoices": {
-            "construct": RecentInvoicesPage
-        },
-        "Create Invoice": {
-            "construct": CreateInvoicePage
-        },
-        "Archived Invoices": null
-    }*/
 };
 
 let localDB = new localDatabase();
