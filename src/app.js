@@ -11,6 +11,7 @@ import { Login } from './components/login/login'
 import { RequestMachine } from './components/requestMachine/requestMachine'
 import { PrototypeMachine } from './components/prototypeMachine/prototypeMachine'
 import { MachineStatus } from './components/machineStatus/machineStatus'
+import { DesignMachine } from './components/designMachine/designMachine'
 
 //Sub Pages
 let app_functions = {
@@ -24,7 +25,7 @@ let app_functions = {
         "construct": PrototypeMachine
     },
     "Design Machine": {
-        "construct": null
+        "construct": DesignMachine
     },
     "Machine Parts": {
         "construct": null

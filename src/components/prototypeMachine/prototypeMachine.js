@@ -182,7 +182,7 @@ let PrototypeMachine = class {
         list.forEach(elem => {
             _html += `
                 <div class="col s12 m6">
-                    <div class="card" data-unique="${elem._id}" data-design="${(elem.hasOwnProperty('design') ? `pending` : 'none')}" data-parts="${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') ? `pending` : 'none')}" data-delivery="">
+                    <div class="card" data-unique="${elem._id}" data-design="${(elem.hasOwnProperty('design') && elem.design.hasOwnProperty('id') ? `pending` : 'none')}" data-parts="${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') ? `pending` : 'none')}" data-delivery="">
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
                             <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
                             <ul class="collection">
@@ -192,7 +192,7 @@ let PrototypeMachine = class {
                                             Design
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('design') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('design') && elem.design.hasOwnProperty('id') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
