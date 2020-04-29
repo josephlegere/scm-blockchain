@@ -12,6 +12,7 @@ import { RequestMachine } from './components/requestMachine/requestMachine'
 import { PrototypeMachine } from './components/prototypeMachine/prototypeMachine'
 import { MachineStatus } from './components/machineStatus/machineStatus'
 import { DesignMachine } from './components/designMachine/designMachine'
+import { PartsMachine } from './components/partsMachine/partsMachine'
 
 //Sub Pages
 let app_functions = {
@@ -28,11 +29,11 @@ let app_functions = {
         "construct": DesignMachine
     },
     "Machine Parts": {
-        "construct": null
-    },
-    "Deliver Machine": {
-        "construct": null
+        "construct": PartsMachine
     }
+    // "Deliver Machine": {
+    //     "construct": null
+    // }
 };
 
 let localDB = new localDatabase();

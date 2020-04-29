@@ -212,7 +212,7 @@ let PrototypeMachine = class {
                                             Deliver
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('delivery') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -340,7 +340,7 @@ let PrototypeMachine = class {
             <div class="row center">
                 <div class="col s12">
                     <h4>
-                        <div>Design</div>
+                        <div>Parts</div>
                     </h4>
                 </div>
             </div>

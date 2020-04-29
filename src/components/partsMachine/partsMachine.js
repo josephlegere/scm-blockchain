@@ -1,30 +1,31 @@
 import { SERVER_ATTR, RENDER_SOURCE } from '../../configurations';
 import { add_html, append_html, remove_element, renderPreLoader, numberWithCommas, convertNewLine } from '../../essentials/library/library';
-import './machineStatus.scss';
+import './partsMachine';
 import axios from 'axios';
 
 import { localDatabase } from '../../essentials/localDatabase/localDatabase';
 
 let localDB = new localDatabase();
 
-let MachineStatus = class {
+let PartsMachine = class {
 
     constructor() {
 
-        this.page_container_title = 'machine-status';
+        this.page_container_title = 'parts-machine';
         this.page_container = `#${this.page_container_title}`;
 
         //external elements
 
         //internal elements -> this includes properties that were converted from parameters
         this.trigger_elements = {};
+        this.parts = [];
 
         this.set_default();
 
         this.render();
         this.triggers();
 
-        this.getMachines();
+        this.getParts();
     }
 
     triggers() {
@@ -35,11 +36,17 @@ let MachineStatus = class {
 
             if (card) {
                 let _unique = card.dataset.unique;
+                let _index = card.dataset.index;
 
                 let viewDocument = e.target.closest('.view-document');
+                let collectionItem = e.target.closest('.collection-item');
 
                 if (viewDocument) {
                     this.getDocument(_unique, 'view');
+                }
+
+                if (collectionItem) {
+                    this.acceptRequest(this.parts[_index]);
                 }
             }
         }
@@ -80,11 +87,11 @@ let MachineStatus = class {
             <div class="page-container" id="${this.page_container_title}">
                 <div class="row">
                     <div class="col s12">
-                        <h3>Order List</h3>
+                        <h3>Parts List</h3>
                     </div>
                 </div>
 
-                <div class="row left-align" id="prototype-list">
+                <div class="row left-align" id="parts-list">
                 </div>
             </div>
         `;
@@ -100,47 +107,22 @@ let MachineStatus = class {
     renderList(list, container) {
         let _html = '';
         console.log(list)
-        list.forEach(elem => {
+        list.forEach((elem, key) => {
             _html += `
                 <div class="col s12 m6">
-                    <div class="card" data-unique="${elem._id}">
+                    <div class="card" data-unique="${elem._id}" data-index="${key}">
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
-                            <span class="card-title"><b>${elem.machine_item}</b></span>
+                            <span class="card-title">Parts <b>${key + 1}</b> for ${elem.manufacturer.name}</span>
                             <span class=""><b>Status</b></span>
                             <ul class="collection">
                                 <li class="collection-item">
                                     <div class="row">
                                         <div class="col s6">
-                                            Design
-                                        </div>
-                                        <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('design') && elem.design.hasOwnProperty('id') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="collection-item">
-                                    <div class="row">
-                                        <div class="col s6">
-                                            Product Parts
-                                        </div>
-                                        <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="collection-item">
-                                    <div class="row">
-                                        <div class="col s6">
-                                            Deliver
-                                        </div>
-                                        <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            Send Invoice for Parts
                                         </div>
                                     </div>
                                 </li>
                             </ul>
-                            <p>Quantity: <b>${elem.quantity} Units</b></p>
-                            <p>Notes: ${(elem.hasOwnProperty('notes') ? `<b>${elem.notes}</b>` : 'n/a')}</p>
                         </div>
                         
                         <div class="card-action"> <!-- --------------CARD ACTION-------------- -->
@@ -158,16 +140,41 @@ let MachineStatus = class {
     }
 
     //triggers
-    getMachines() {
-        this.fetchMachines()
+    getParts() {
+        this.fetchParts()
             .then(res => {
                 console.log(res)
-                let _machines = res.data;
+                let _parts = res.data;
 
                 if (!res.success) throw res.error;
-                if (res.count < 1) throw 'No machines are listed yet.';
+                if (res.count < 1) throw 'No parts are listed yet.';
 
-                this.renderList(_machines, '#prototype-list');
+                this.parts = _parts;
+                this.renderList(_parts, '#parts-list');
+            })
+            .catch(err => {
+                let _html = '';
+                console.log(err);
+                _html = `${err}`;
+            });
+    }
+
+    acceptRequest(elem) {
+        let _body = {
+            id: elem._id,
+            machine: elem.machine,
+            document: elem.document,
+            manufacturer: elem.manufacturer,
+            delivery: elem.delivery
+        };
+
+        this.updateDesign(_body)
+            .then(res => {
+                console.log(res)
+                // let _parts = res.data;
+
+                // if (!res.success) throw res.error;
+                // if (res.count < 1) throw 'No machines are listed yet.';
             })
             .catch(err => {
                 let _html = '';
@@ -177,7 +184,7 @@ let MachineStatus = class {
     }
 
     getDocument(uniq, type) {
-        let url = SERVER_ATTR.PAGE_MACHINE + `/${type}/${uniq}`;
+        let url = SERVER_ATTR.PAGE_PARTS + `/${type}/${uniq}`;
 
         this.accessDocuments(url)
             .then(res => {
@@ -197,11 +204,29 @@ let MachineStatus = class {
     }
 
     //controllers
-    async fetchMachines() { //fetch clients and companies
+    async fetchParts() { //fetch 
         let userLogged = localDB.get(['log_token']);
-        const sendRequest = new Request(SERVER_ATTR.PAGE_MACHINE_CUSTOMER, {
+        const sendRequest = new Request(SERVER_ATTR.PAGE_PARTS, {
             method: 'GET',
             //body: body,
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'auth-token': userLogged.log_token
+            }
+        });
+
+        let list = await fetch(sendRequest); //fetch returns a Promise
+        let data = await list.json();
+
+        return data;
+    }
+
+    async updateDesign(val) { //update
+        let userLogged = localDB.get(['log_token']);
+        let body = JSON.stringify(val);
+        const sendRequest = new Request(SERVER_ATTR.PAGE_PARTS, {
+            method: 'PUT',
+            body: body,
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8',
                 'auth-token': userLogged.log_token
@@ -231,4 +256,4 @@ let MachineStatus = class {
 
 }
 
-export { MachineStatus };
+export { PartsMachine };

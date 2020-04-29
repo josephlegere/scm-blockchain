@@ -7,6 +7,7 @@ const SERVER_ATTR = {
     PAGE_MACHINE: URL_SERVER + 'machines',
     PAGE_MACHINE_CUSTOMER: URL_SERVER + 'machines/customer',
     PAGE_DESIGNS: URL_SERVER + 'designs',
+    PAGE_PARTS: URL_SERVER + 'parts',
     PAGE_LOGIN: URL_SERVER + 'user/login'
 }
 
