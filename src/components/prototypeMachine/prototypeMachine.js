@@ -68,17 +68,30 @@ let PrototypeMachine = class {
                 let machineDeliver = e.target.closest('.machine-deliver');
 
                 if (viewDocument) {
-                    this.getDocument(_unique, 'view');
+                    this.getDocument(_unique, 'machines', 'view');
                     //document.getElementById('document-viewer').setAttribute('src', 'http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml');
                     //this.trigger_elements['page modal'].open();
                     //window.open("http://localhost:5000/public/uploads/5ea2e38a89397a5ad9b3bd64/1587917956117_machine.xml", "_blank")
                 }
                 else if (machineDesign) {
+                    let _unique_design = machineDesign.dataset.unique;
                     if (_design === 'none') {
                         this.render_designRequest(_unique);
                         this.trigger_elements['page modal'].open();
                     }
-
+                    else {
+                        this.getDocument(_unique_design, 'designs', 'view');
+                    }
+                }
+                else if (machineParts) {
+                    let _unique_parts = machineParts.dataset.unique;
+                    if (_parts === 'none') {
+                        this.render_partsRequest(_unique);
+                        this.trigger_elements['page modal'].open();
+                    }
+                    else {
+                        this.getDocument(_unique_parts, 'parts', 'view');
+                    }
                 }
             }
         }
@@ -169,11 +182,11 @@ let PrototypeMachine = class {
         list.forEach(elem => {
             _html += `
                 <div class="col s12 m6">
-                    <div class="card" data-unique="${elem._id}" data-design="${(elem.hasOwnProperty('design') ? `pending` : 'none')}" data-parts="" data-delivery="">
+                    <div class="card" data-unique="${elem._id}" data-design="${(elem.hasOwnProperty('design') ? `pending` : 'none')}" data-parts="${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') ? `pending` : 'none')}" data-delivery="">
                         <div class="card-content"> <!-- --------------CARD CONTENT-------------- -->
                             <span class="card-title"><b>${elem.machine_item}</b> for ${elem.customer.name}</span>
                             <ul class="collection">
-                                <li class="collection-item machine-design">
+                                <li class="collection-item machine-design" data-unique="${(elem.hasOwnProperty('design') ? `${elem.design.id}` : '')}">
                                     <div class="row">
                                         <div class="col s6">
                                             Design
@@ -183,13 +196,13 @@ let PrototypeMachine = class {
                                         </div>
                                     </div>
                                 </li>
-                                <li class="collection-item machine-parts">
+                                <li class="collection-item machine-parts" data-unique="${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') ? `${elem.parts.id}` : '')}">
                                     <div class="row">
                                         <div class="col s6">
                                             Product Parts
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.items > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.hasOwnProperty('id') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -290,7 +303,7 @@ let PrototypeMachine = class {
                         <div class="col s12 m2"></div>
 
                         <div class="input-field col s12 m8">
-                            <input placeholder="" id="size" type="number" class="form-input-item" min="0" max="15" data-property="size">
+                            <input placeholder="" id="size" type="number" class="form-input-item" min="0" data-property="size">
                             <label for="size">Size</label>
                         </div>
                         <div class="col s12 m2"></div>
@@ -299,6 +312,91 @@ let PrototypeMachine = class {
                     <div class="row">
                         <div class="col s12 offset-m2 m8">
                             <a class="waves-effect waves-light btn right" id="submit-form">Submit Design</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        `;
+
+        add_html({
+            element: '.modal-content',
+            value: _html
+        });
+    }
+
+    render_partsRequest (id) {
+        let _html = '';
+        this.form = {
+            'amount': '',
+            'parts': ['Part 1', 'Part 2'],
+            'schedule': '',
+            'location': '',
+            'machine': id
+        }
+        this.form_process = 'parts';
+
+        _html = `
+            <div class="row center">
+                <div class="col s12">
+                    <h4>
+                        <div>Design</div>
+                    </h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <form class="col s12 center">
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="amount" type="number" class="form-input-item" min="0" data-property="amount">
+                            <label for="amount">Amount</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+                        <div class="col s12 m8">
+                            <ul class="collection with-header">
+                                <li class="collection-header"><h5>Parts</h5></li>
+                                <li class="collection-item">
+                                    Part 1
+                                </li>
+                                <li class="collection-item">
+                                    Part 2
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="schedule" type="text" class="form-input-item" data-property="schedule">
+                            <label for="schedule">Delivery Schedule</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 m2"></div>
+
+                        <div class="input-field col s12 m8">
+                            <input placeholder="" id="location" type="text" class="form-input-item" data-property="location">
+                            <label for="location">Delivery Location</label>
+                        </div>
+                        <div class="col s12 m2"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col s12 offset-m2 m8">
+                            <a class="waves-effect waves-light btn right" id="submit-form">Submit Parts</a>
                         </div>
                     </div>
 
@@ -331,8 +429,8 @@ let PrototypeMachine = class {
             });
     }
 
-    getDocument(uniq, action) {
-        let url = SERVER_ATTR.PAGE_MACHINE + `/${action}/${uniq}`;
+    getDocument(uniq, process, action) {
+        let url = URL_SERVER + `${process}/${action}/${uniq}`;
 
         this.accessDocuments(url)
             .then(res => {

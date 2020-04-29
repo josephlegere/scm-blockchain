@@ -114,7 +114,7 @@ let MachineStatus = class {
                                             Design
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('design') && elem.design.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('design') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -124,7 +124,7 @@ let MachineStatus = class {
                                             Product Parts
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('parts') && elem.parts.items.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
@@ -134,7 +134,7 @@ let MachineStatus = class {
                                             Deliver
                                         </div>
                                         <div class="col s6 right-align">
-                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') && elem.deliver.length > 0 ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
+                                            <i class="material-icons ${(elem.hasOwnProperty('deliver') ? `green-text text-darken-1` : 'red-text text-darken-1')}">lens</i>
                                         </div>
                                     </div>
                                 </li>
